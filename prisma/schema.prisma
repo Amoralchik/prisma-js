@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["selectRelationCount"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model employeebirthdays {
+  name       String?   @db.VarChar
+  birth_date DateTime? @db.Date
+
+  @@ignore
+}
+
+model lists {
+  list_name String @db.VarChar
+  list_id   Int    @id
+  todo      todo[]
+}
+
+model todo {
+  title    String   @db.VarChar
+  done     Boolean
+  due_date DateTime @db.Date
+  lists_id Int
+  id       Int      @id @default(autoincrement())
+  lists    lists    @relation(fields: [lists_id], references: [list_id])
+}
