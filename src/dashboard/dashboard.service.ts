@@ -4,6 +4,9 @@ import prisma from '../prisma';
 @Injectable()
 export class DashboardService {
   async getToday(date: string) {
+    const fixedDate = new Date(date);
+    fixedDate.setHours(fixedDate.getHours() + 3);
+
     const list = await prisma.lists.findMany({
       select: {
         list_id: true,
@@ -17,8 +20,10 @@ export class DashboardService {
             AND: [
               {
                 AND: [
-                  { due_date: { gte: new Date() } },
-                  { due_date: { lte: new Date(date) } },
+                  {
+                    due_date: { gte: new Date(`${fixedDate.toDateString()}`) },
+                  },
+                  { due_date: { lte: fixedDate } },
                 ],
               },
               { done: false },

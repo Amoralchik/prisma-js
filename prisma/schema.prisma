@@ -25,7 +25,7 @@ model lists {
 model todo {
   title    String   @db.VarChar
   done     Boolean
-  due_date DateTime @db.Date
+  due_date DateTime @db.Timestamp(3)
   lists_id Int
   id       Int      @id @default(autoincrement())
   lists    lists    @relation(fields: [lists_id], references: [list_id])
