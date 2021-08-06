@@ -1,12 +1,11 @@
-import { Controller, Get } from '@nestjs/common';
-import prisma from '../prisma';
-
+import { Controller, Get, Query } from '@nestjs/common';
+import { DashboardService } from './dashboard.service';
 @Controller('dashboard')
 export class DashboardController {
-  @Get()
-  getDashboard() {
-    return prisma.$queryRaw(
-      "SELECT list_name,list_id,count(*) FROM todo RIGHT JOIN lists ON todo.lists_id = lists.list_id WHERE due_date BETWEEN CURRENT_DATE AND '2021-08-08' AND done=false GROUP BY list_id ",
-    );
+  constructor(private readonly dashboardService: DashboardService) {}
+
+  @Get('/')
+  async getDashboard(@Query('date') date) {
+    return this.dashboardService.getToday(date);
   }
 }

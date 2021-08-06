@@ -16,21 +16,23 @@ export class ListService {
     });
   }
   async getOne(todo_id) {
-    return prisma.todo.findMany({
+    return prisma.todo.findFirst({
       where: { id: todo_id },
     });
   }
   async create({
     todo_title,
     list_id,
+    todo_date,
   }: {
     todo_title: string;
     list_id: number;
+    todo_date: string;
   }) {
     return prisma.todo.create({
       data: {
         done: false,
-        due_date: new Date(),
+        due_date: new Date(todo_date),
         title: todo_title,
         lists_id: list_id,
       },
@@ -42,27 +44,25 @@ export class ListService {
     });
   }
 
-  async updateDone(todo_id, { done }: { done: boolean }) {
+  async update(todo_id, { due_date, lists_id, done, title }) {
+    const fixedObject = {};
+
+    if (due_date !== undefined) {
+      fixedObject['due_date'] = new Date(due_date);
+    }
+    if (title !== undefined) {
+      fixedObject['title'] = title;
+    }
+    if (lists_id !== undefined) {
+      fixedObject['lists_id'] = Number(lists_id);
+    }
+
+    if (done !== undefined) {
+      fixedObject['done'] = JSON.parse(done);
+    }
+
     return prisma.todo.update({
-      data: { done },
-      where: { id: todo_id },
-    });
-  }
-  async updateTitle(todo_id, { title }: { title: string }) {
-    return prisma.todo.update({
-      data: { title },
-      where: { id: todo_id },
-    });
-  }
-  async updateDate(todo_id, { due_date }: { due_date: string }) {
-    return prisma.todo.update({
-      data: { due_date: new Date(due_date) },
-      where: { id: todo_id },
-    });
-  }
-  async updateTodosList(todo_id, { lists_id }: { lists_id: number }) {
-    return prisma.todo.update({
-      data: { lists_id },
+      data: { ...fixedObject },
       where: { id: todo_id },
     });
   }

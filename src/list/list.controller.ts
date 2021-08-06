@@ -1,4 +1,9 @@
-import { Put } from '@nestjs/common';
+import {
+  ParseBoolPipe,
+  ParseIntPipe,
+  Put,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   Body,
   Controller,
@@ -8,6 +13,9 @@ import {
   Post,
   Patch,
 } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
+import { TodoDTO } from './body.dto';
+('./body.dto.ts');
 import { ListService } from './list.service';
 
 @Controller('list')
@@ -25,8 +33,12 @@ export class ListController {
   }
 
   @Post('/:id')
-  create(@Param('id') id, @Body('title') title) {
-    return this.listService.create({ list_id: Number(id), todo_title: title });
+  create(@Param('id') id, @Body() { title, date }) {
+    return this.listService.create({
+      list_id: Number(id),
+      todo_title: title,
+      todo_date: date,
+    });
   }
 
   @Delete('/:id')
@@ -34,38 +46,28 @@ export class ListController {
     return this.listService.remove(Number(id));
   }
 
-  @Patch('/:id/date')
-  updateDate(@Param('id') id, @Body() patchTodo: { date }) {
-    return this.listService.updateDate(Number(id), {
-      due_date: patchTodo.date,
-    });
-  }
-  @Patch('/:id/done')
-  updateDone(@Param('id') id, @Body() patchTodo: { done }) {
-    return this.listService.updateDone(Number(id), {
-      done: JSON.parse(patchTodo.done),
-    });
-  }
-  @Patch('/:id/list')
-  update(@Param('id') id, @Body() patchTodo: { list }) {
-    return this.listService.updateTodosList(Number(id), {
-      lists_id: Number(patchTodo.list),
-    });
-  }
-  @Patch('/:id/title')
-  updateTitle(@Param('id') id, @Body() patchTodo: { title }) {
-    return this.listService.updateTitle(Number(id), {
+  @Patch('/:id')
+  update(
+    @Param('id', ParseIntPipe) id,
+    @Body()
+    patchTodo: TodoDTO,
+  ) {
+    return this.listService.update(id, {
+      done: patchTodo.done,
+      due_date: patchTodo.due_date,
       title: patchTodo.title,
+      lists_id: patchTodo.lists_id,
     });
   }
 
   @Put('/:id')
-  putUpdate(@Param('id') id, @Body() patchTodo: { title; done; date; listId }) {
+  @ApiBody({ type: [TodoDTO] })
+  putUpdate(@Param('id') id, @Body() patchTodo: TodoDTO) {
     return this.listService.putUpdate(Number(id), {
       title: patchTodo.title,
-      done: Boolean(patchTodo.done),
-      due_date: patchTodo.date,
-      lists_id: Number(patchTodo.listId),
+      done: patchTodo.done,
+      due_date: patchTodo.due_date,
+      lists_id: patchTodo.lists_id,
     });
   }
 }
