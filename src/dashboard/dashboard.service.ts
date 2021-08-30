@@ -5,6 +5,7 @@ import prisma from '../prisma';
 export class DashboardService {
   async getToday(date: string) {
     const fixedDate = new Date(date);
+
     fixedDate.setHours(fixedDate.getHours() + 3);
 
     const list = await prisma.lists.findMany({

@@ -9,4 +9,6 @@ export class TodoDTO {
   due_date: string;
   @ApiProperty()
   lists_id: number;
+  @ApiProperty()
+  desc: string;
 }

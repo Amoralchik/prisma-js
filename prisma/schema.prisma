@@ -18,14 +18,16 @@ model employeebirthdays {
 
 model lists {
   list_name String @db.VarChar
-  list_id   Int    @id
+  list_id   Int    @id @default(autoincrement())
   todo      todo[]
 }
 
 model todo {
   title    String   @db.VarChar
+  desc     String?   @db.VarChar
   done     Boolean
   due_date DateTime @db.Timestamp(3)
+  createAt DateTime @db.Timestamp(3)
   lists_id Int
   id       Int      @id @default(autoincrement())
   lists    lists    @relation(fields: [lists_id], references: [list_id])

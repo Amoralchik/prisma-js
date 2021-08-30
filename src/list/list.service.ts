@@ -10,11 +10,34 @@ type updateParams = {
 
 @Injectable()
 export class ListService {
+  async createList(title: string) {
+    return prisma.lists.create({
+      data: { list_name: title },
+    });
+  }
+
+  async deleteList(id: number) {
+    return prisma.lists.delete({
+      where: { list_id: id },
+    });
+  }
+
+  async getAny() {
+    return prisma.todo.findMany({
+      orderBy: [{ id: 'asc' }],
+    });
+  }
+
+  async getAnyList() {
+    return prisma.lists.findMany();
+  }
+
   async getAll(id) {
     return prisma.todo.findMany({
       where: { lists_id: id },
     });
   }
+
   async getOne(todo_id) {
     return prisma.todo.findFirst({
       where: { id: todo_id },
@@ -24,13 +47,17 @@ export class ListService {
     todo_title,
     list_id,
     todo_date,
+    desc,
   }: {
     todo_title: string;
     list_id: number;
     todo_date: string;
+    desc: string;
   }) {
     return prisma.todo.create({
       data: {
+        createAt: new Date(),
+        desc: desc,
         done: false,
         due_date: new Date(todo_date),
         title: todo_title,

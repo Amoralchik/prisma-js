@@ -1,9 +1,4 @@
-import {
-  ParseBoolPipe,
-  ParseIntPipe,
-  Put,
-  ValidationPipe,
-} from '@nestjs/common';
+import { ParseIntPipe, Put } from '@nestjs/common';
 import {
   Body,
   Controller,
@@ -22,6 +17,15 @@ import { ListService } from './list.service';
 export class ListController {
   constructor(private readonly listService: ListService) {}
 
+  @Get('/')
+  getAny() {
+    return this.listService.getAny();
+  }
+  @Get('/task/list')
+  getAnyList() {
+    return this.listService.getAnyList();
+  }
+
   @Get('/:id')
   getAll(@Param('id') id) {
     return this.listService.getAll(Number(id));
@@ -32,12 +36,23 @@ export class ListController {
     return this.listService.getOne(Number(id));
   }
 
+  @Post('/createList/')
+  createList(@Body() { title }) {
+    return this.listService.createList(title);
+  }
+
+  @Delete('/deleteList/:id')
+  deleteList(@Param('id') id) {
+    return this.listService.deleteList(Number(id));
+  }
+
   @Post('/:id')
-  create(@Param('id') id, @Body() { title, date }) {
+  create(@Param('id') id, @Body() { title, date, desc }) {
     return this.listService.create({
       list_id: Number(id),
       todo_title: title,
       todo_date: date,
+      desc,
     });
   }
 
