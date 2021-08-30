@@ -44,4 +44,32 @@ export class DashboardService {
 
     return result;
   }
+
+  async get() {
+    const list = await prisma.lists.findMany({
+      select: {
+        list_id: true,
+        list_name: true,
+        todo: {
+          select: {
+            due_date: true,
+            id: true,
+          },
+          where: {
+            done: false,
+          },
+        },
+      },
+    });
+
+    const result = list.map((obj) => {
+      return {
+        list_id: obj.list_id,
+        list_name: obj.list_name,
+        count: obj.todo.length,
+      };
+    });
+
+    return result;
+  }
 }
