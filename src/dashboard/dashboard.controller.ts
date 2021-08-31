@@ -4,12 +4,18 @@ import { DashboardService } from './dashboard.service';
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
-  @Get('/today')
+  @Get('/date')
   async getDashboardToday(@Query('date') date) {
-    return this.dashboardService.getToday(date);
+    return this.dashboardService.getDate(date);
   }
+
+  @Get('/todayCount')
+  async getCount() {
+    return this.dashboardService.getTodayCount();
+  }
+
   @Get('/')
   async getDashboard() {
-    return this.dashboardService.get();
+    return this.dashboardService.getDashboard();
   }
 }

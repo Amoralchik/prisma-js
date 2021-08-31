@@ -7,9 +7,15 @@ import { ListController } from './list/list.controller';
 import { CollectionService } from './collection/collection.service';
 import { ListService } from './list/list.service';
 import { DashboardService } from './dashboard/dashboard.service';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
-  imports: [],
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'build'),
+    }),
+  ],
   controllers: [
     AppController,
     DashboardController,
